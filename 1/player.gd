@@ -21,6 +21,7 @@ func _handle_collisions():
 		# collision is with an enemy
 		if collision.get_collider().is_in_group("enemy"):
 			var enemy = collision.get_collider()
+			$CatchSound.play()
 			enemy.catch()
 			break
 
