@@ -1,0 +1,86 @@
+[gd_scene load_steps=8 format=3 uid="uid://0peljs231pok"]
+
+[ext_resource type="PackedScene" uid="uid://b7l3trwahyov" path="res://player.tscn" id="1_k54bf"]
+[ext_resource type="PackedScene" uid="uid://d3iofibgbvgby" path="res://mob.tscn" id="2_pndiw"]
+[ext_resource type="FontFile" uid="uid://cyvo0hxccqqr2" path="res://fonts/Montserrat-Medium.ttf" id="3_i8e78"]
+[ext_resource type="Script" path="res://ScoreLabel.gd" id="4_x50ut"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_x1vtu"]
+size = Vector3(60, 2, 60)
+
+[sub_resource type="BoxMesh" id="BoxMesh_tov3t"]
+size = Vector3(60, 2, 60)
+
+[sub_resource type="Theme" id="Theme_36gcm"]
+default_font = ExtResource("3_i8e78")
+default_font_size = 22
+
+[node name="Main" type="Node"]
+
+[node name="Ground" type="StaticBody3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+collision_layer = 4
+collision_mask = 7
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
+shape = SubResource("BoxShape3D_x1vtu")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground"]
+mesh = SubResource("BoxMesh_tov3t")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.00151844, 0.999999, 0, -0.999999, 0.00151844, 0, 22.3575, 0)
+shadow_enabled = true
+
+[node name="CameraPivot" type="Marker3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 0.707107, 0.707107, 0, -0.707107, 0.707107, 0, 0, 0)
+
+[node name="Camera3D" type="Camera3D" parent="CameraPivot"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, 19)
+projection = 1
+size = 19.0
+
+[node name="Player" parent="." instance=ExtResource("1_k54bf")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 4, 0)
+
+[node name="Mob" parent="." instance=ExtResource("2_pndiw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, -8.77591)
+
+[node name="Mob2" parent="." instance=ExtResource("2_pndiw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1, 11.0815)
+
+[node name="Mob3" parent="." instance=ExtResource("2_pndiw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -8.423, 1, 0)
+
+[node name="Mob4" parent="." instance=ExtResource("2_pndiw")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 7.783, 1, 0)
+
+[node name="UserInterface" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="ScoreLabel" type="Label" parent="UserInterface" node_paths=PackedStringArray("winScreen")]
+layout_mode = 0
+offset_left = 43.0
+offset_top = 35.0
+offset_right = 104.0
+offset_bottom = 58.0
+theme = SubResource("Theme_36gcm")
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "Score: 0"
+script = ExtResource("4_x50ut")
+winScreen = NodePath("../WinScreen")
+
+[node name="WinScreen" type="AcceptDialog" parent="UserInterface"]
+initial_position = 1
+ok_button_text = "Restart"
+dialog_text = "You Win!"
+
+[connection signal="caught" from="Mob" to="UserInterface/ScoreLabel" method="_on_mob_caught"]
+[connection signal="caught" from="Mob2" to="UserInterface/ScoreLabel" method="_on_mob_caught"]
+[connection signal="caught" from="Mob3" to="UserInterface/ScoreLabel" method="_on_mob_caught"]
+[connection signal="caught" from="Mob4" to="UserInterface/ScoreLabel" method="_on_mob_caught"]
+[connection signal="game_over" from="UserInterface/ScoreLabel" to="Player" method="_on_score_label_game_over"]
+[connection signal="confirmed" from="UserInterface/WinScreen" to="UserInterface/ScoreLabel" method="_on_win_screen_confirmed"]
