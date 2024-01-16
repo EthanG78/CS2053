@@ -6,19 +6,19 @@ extends CharacterBody3D
 
 var target_velocity = Vector3.ZERO
 
-var game_over = false
+var can_move = true
 
 func _handle_collisions():
-	# iterate through all collisions that occured this frame
+	# Iterate through all collisions that occured this frame
 	for index in range(get_slide_collision_count()):
-		# get one of the collisions with the player
+		# Get one of the collisions with the player
 		var collision = get_slide_collision(index)
 		
-		# collisions can be null?
+		# Collisions can be null?
 		if collision.get_collider() == null:
 			continue
 			
-		# collision is with an enemy
+		# Collision is with an enemy
 		if collision.get_collider().is_in_group("enemy"):
 			var enemy = collision.get_collider()
 			$CatchSound.play()
@@ -26,7 +26,7 @@ func _handle_collisions():
 			break
 
 func _physics_process(delta):
-	if game_over:
+	if !can_move:
 		return
 	
 	var direction = Vector3.ZERO
@@ -45,11 +45,11 @@ func _physics_process(delta):
 		direction = direction.normalized()
 		$Pivot.look_at(position + direction, Vector3.UP)
 		
-	# ground velocity
+	# Ground velocity
 	target_velocity.x = direction.x * speed
 	target_velocity.z = direction.z * speed
 
-	# vertical velocity
+	# Certical velocity
 	if not is_on_floor():
 		target_velocity.y = target_velocity.y - (fall_acceleration * delta)
 		
@@ -58,6 +58,8 @@ func _physics_process(delta):
 	_handle_collisions()
 	move_and_slide()
 
-
-func _on_score_label_game_over():
-	game_over = true
+func _on_game_done():
+	# If the game is done, either through winning
+	# or a game over, then the Player should
+	# no longer be able to move.
+	can_move = false

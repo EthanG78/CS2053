@@ -1,4 +1,4 @@
-[gd_scene load_steps=11 format=3 uid="uid://0peljs231pok"]
+[gd_scene load_steps=13 format=3 uid="uid://0peljs231pok"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_50uh7"]
 [ext_resource type="Material" uid="uid://dm6d16wmrn02o" path="res://art/newEnemyMaterial.material" id="1_avum8"]
@@ -7,6 +7,7 @@
 [ext_resource type="PackedScene" uid="uid://d3iofibgbvgby" path="res://mob.tscn" id="2_pndiw"]
 [ext_resource type="FontFile" uid="uid://cyvo0hxccqqr2" path="res://fonts/Montserrat-Medium.ttf" id="3_i8e78"]
 [ext_resource type="Script" path="res://ScoreLabel.gd" id="4_x50ut"]
+[ext_resource type="Script" path="res://TimerLabel.gd" id="8_750hd"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_x1vtu"]
 size = Vector3(30, 2, 30)
@@ -15,6 +16,10 @@ size = Vector3(30, 2, 30)
 size = Vector3(30, 2, 30)
 
 [sub_resource type="Theme" id="Theme_36gcm"]
+default_font = ExtResource("3_i8e78")
+default_font_size = 22
+
+[sub_resource type="Theme" id="Theme_svfwx"]
 default_font = ExtResource("3_i8e78")
 default_font_size = 22
 
@@ -71,19 +76,32 @@ anchors_preset = 0
 offset_right = 40.0
 offset_bottom = 40.0
 
-[node name="ScoreLabel" type="Label" parent="UserInterface" node_paths=PackedStringArray("winScreen")]
+[node name="ScoreLabel" type="Label" parent="UserInterface" node_paths=PackedStringArray("WinScreen")]
 layout_mode = 0
-offset_left = 43.0
-offset_top = 35.0
-offset_right = 104.0
-offset_bottom = 58.0
+offset_left = 80.0
+offset_top = 32.0
+offset_right = 168.0
+offset_bottom = 60.0
 theme = SubResource("Theme_36gcm")
 theme_override_colors/font_color = Color(0, 0, 0, 1)
 text = "Score: 0"
 script = ExtResource("4_x50ut")
-winScreen = NodePath("../WinScreen")
+WinScreen = NodePath("../PopupDialog")
 
-[node name="WinScreen" type="AcceptDialog" parent="UserInterface"]
+[node name="TimerLabel" type="Label" parent="UserInterface" node_paths=PackedStringArray("GameTimer", "LoseScreen")]
+layout_mode = 0
+offset_left = 456.0
+offset_top = 32.0
+offset_right = 676.0
+offset_bottom = 60.0
+theme = SubResource("Theme_svfwx")
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "Time Remaining: 0s"
+script = ExtResource("8_750hd")
+GameTimer = NodePath("../../GameTimer")
+LoseScreen = NodePath("../PopupDialog")
+
+[node name="PopupDialog" type="AcceptDialog" parent="UserInterface"]
 initial_position = 1
 ok_button_text = "Restart"
 dialog_text = "You Win!"
@@ -92,10 +110,19 @@ dialog_text = "You Win!"
 wait_time = 3.0
 autostart = true
 
+[node name="GameTimer" type="Timer" parent="."]
+wait_time = 20.0
+one_shot = true
+autostart = true
+
 [connection signal="caught" from="Mob" to="UserInterface/ScoreLabel" method="_on_mob_caught"]
 [connection signal="caught" from="Mob2" to="UserInterface/ScoreLabel" method="_on_mob_caught"]
 [connection signal="caught" from="Mob3" to="UserInterface/ScoreLabel" method="_on_mob_caught"]
 [connection signal="caught" from="Mob4" to="UserInterface/ScoreLabel" method="_on_mob_caught"]
-[connection signal="game_over" from="UserInterface/ScoreLabel" to="Player" method="_on_score_label_game_over"]
-[connection signal="confirmed" from="UserInterface/WinScreen" to="UserInterface/ScoreLabel" method="_on_win_screen_confirmed"]
+[connection signal="game_won" from="UserInterface/ScoreLabel" to="." method="_on_game_done"]
+[connection signal="game_won" from="UserInterface/ScoreLabel" to="Player" method="_on_game_done"]
+[connection signal="game_over" from="UserInterface/TimerLabel" to="." method="_on_game_done"]
+[connection signal="game_over" from="UserInterface/TimerLabel" to="Player" method="_on_game_done"]
+[connection signal="confirmed" from="UserInterface/PopupDialog" to="UserInterface/ScoreLabel" method="_on_win_screen_confirmed"]
 [connection signal="timeout" from="SpawnTimer" to="." method="_on_spawn_timer_timeout"]
+[connection signal="timeout" from="GameTimer" to="UserInterface/TimerLabel" method="_on_game_timer_timeout"]
