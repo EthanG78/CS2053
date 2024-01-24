@@ -1,3 +1,40 @@
-[gd_scene format=3 uid="uid://bcxyivfybbd7i"]
+[gd_scene load_steps=7 format=3 uid="uid://bcxyivfybbd7i"]
+
+[ext_resource type="Script" path="res://main.gd" id="1_6dwqj"]
+[ext_resource type="PackedScene" uid="uid://0380s6qbpq24" path="res://player.tscn" id="1_33akm"]
+[ext_resource type="PackedScene" uid="uid://6e84wrkupakb" path="res://ghost.tscn" id="2_jl0b1"]
+
+[sub_resource type="RectangleShape2D" id="RectangleShape2D_atf3s"]
+size = Vector2(639.5, 478.5)
+
+[sub_resource type="Gradient" id="Gradient_duy4y"]
+offsets = PackedFloat32Array(0.0291971, 0.226277, 0.536496, 0.770073, 1)
+colors = PackedColorArray(0.44691, 0.0505829, 0.194879, 1, 0.630565, 0.138305, 0.286402, 1, 0.886329, 0.178937, 0.393683, 1, 0.969984, 1.0685e-05, 0.634279, 1, 1, 1, 1, 1)
+
+[sub_resource type="GradientTexture1D" id="GradientTexture1D_lavas"]
+gradient = SubResource("Gradient_duy4y")
+width = 640
 
 [node name="Main" type="Node2D"]
+script = ExtResource("1_6dwqj")
+GhostTemplate = ExtResource("2_jl0b1")
+
+[node name="Background" type="Area2D" parent="."]
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="Background"]
+position = Vector2(320, 240)
+shape = SubResource("RectangleShape2D_atf3s")
+
+[node name="Sprite2D" type="Sprite2D" parent="Background"]
+texture = SubResource("GradientTexture1D_lavas")
+centered = false
+region_enabled = true
+region_rect = Rect2(0, 0, 640, 480)
+
+[node name="Player" parent="." instance=ExtResource("1_33akm")]
+
+[node name="GhostTimer" type="Timer" parent="."]
+wait_time = 0.5
+autostart = true
+
+[connection signal="timeout" from="GhostTimer" to="." method="_on_ghost_timer_timeout"]
