@@ -10,7 +10,7 @@ config_version=5
 
 [application]
 
-config/name="Lab 2 - Dodge the Ghostrs"
+config/name="Lab 2 - Dodge the Ghosts"
 config/features=PackedStringArray("4.2", "Forward Plus")
 config/icon="res://icon.svg"
 
