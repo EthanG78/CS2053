@@ -66,9 +66,10 @@ script = ExtResource("5_kl6mu")
 GameOverDialog = NodePath("../GameOver")
 
 [node name="GameOver" type="AcceptDialog" parent="UserInterface"]
+title = "Game Over!"
 initial_position = 1
+size = Vector2i(150, 80)
 ok_button_text = "Restart"
-dialog_text = "Game Over"
 
 [connection signal="area_entered" from="Player" to="." method="_on_player_area_entered"]
 [connection signal="area_entered" from="Player" to="UserInterface/ScoreLabel" method="_on_player_area_entered"]

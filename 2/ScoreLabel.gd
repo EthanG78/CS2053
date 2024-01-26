@@ -33,6 +33,6 @@ func _on_player_area_entered(area):
 		# Game over state
 		s_game_over.emit()
 		game_over = true
-		GameOverDialog.set_text("Game Over\nScore: %s" % [score])
+		GameOverDialog.set_text("Score: %s seconds" % [score])
 		GameOverDialog.set_visible(true)
 
