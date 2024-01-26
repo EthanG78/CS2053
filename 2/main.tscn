@@ -1,8 +1,10 @@
-[gd_scene load_steps=7 format=3 uid="uid://bcxyivfybbd7i"]
+[gd_scene load_steps=10 format=3 uid="uid://bcxyivfybbd7i"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_6dwqj"]
 [ext_resource type="PackedScene" uid="uid://0380s6qbpq24" path="res://player.tscn" id="1_33akm"]
 [ext_resource type="PackedScene" uid="uid://6e84wrkupakb" path="res://ghost.tscn" id="2_jl0b1"]
+[ext_resource type="FontFile" uid="uid://cyvo0hxccqqr2" path="res://fonts/Montserrat-Medium.ttf" id="4_1wmch"]
+[ext_resource type="Script" path="res://ScoreLabel.gd" id="5_kl6mu"]
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_atf3s"]
 size = Vector2(639.5, 478.5)
@@ -14,6 +16,10 @@ colors = PackedColorArray(0.44691, 0.0505829, 0.194879, 1, 0.630565, 0.138305, 0
 [sub_resource type="GradientTexture1D" id="GradientTexture1D_lavas"]
 gradient = SubResource("Gradient_duy4y")
 width = 640
+
+[sub_resource type="Theme" id="Theme_qx0rd"]
+default_font = ExtResource("4_1wmch")
+default_font_size = 18
 
 [node name="Main" type="Node2D"]
 script = ExtResource("1_6dwqj")
@@ -32,9 +38,41 @@ region_enabled = true
 region_rect = Rect2(0, 0, 640, 480)
 
 [node name="Player" parent="." instance=ExtResource("1_33akm")]
+position = Vector2(320, 240)
 
 [node name="GhostTimer" type="Timer" parent="."]
 wait_time = 0.5
 autostart = true
 
+[node name="UserInterface" type="Control" parent="."]
+top_level = true
+layout_mode = 3
+anchors_preset = 0
+offset_top = 1.0
+offset_right = 640.0
+offset_bottom = 42.0
+
+[node name="ScoreLabel" type="Label" parent="UserInterface" node_paths=PackedStringArray("GameOverDialog")]
+layout_mode = 0
+offset_left = 36.0
+offset_top = 29.0
+offset_right = 277.0
+offset_bottom = 78.0
+theme = SubResource("Theme_qx0rd")
+theme_override_colors/font_color = Color(0, 0, 0, 1)
+text = "Objective: Survive
+Score: 0"
+script = ExtResource("5_kl6mu")
+GameOverDialog = NodePath("../GameOver")
+
+[node name="GameOver" type="AcceptDialog" parent="UserInterface"]
+initial_position = 1
+ok_button_text = "Restart"
+dialog_text = "Game Over"
+
+[connection signal="area_entered" from="Player" to="." method="_on_player_area_entered"]
+[connection signal="area_entered" from="Player" to="UserInterface/ScoreLabel" method="_on_player_area_entered"]
 [connection signal="timeout" from="GhostTimer" to="." method="_on_ghost_timer_timeout"]
+[connection signal="s_game_over" from="UserInterface/ScoreLabel" to="." method="_on_score_label_s_game_over"]
+[connection signal="s_game_over" from="UserInterface/ScoreLabel" to="Player" method="_on_score_label_s_game_over"]
+[connection signal="confirmed" from="UserInterface/GameOver" to="." method="_on_game_over_confirmed"]
