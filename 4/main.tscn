@@ -1,7 +1,11 @@
-[gd_scene load_steps=5 format=3 uid="uid://dpnq417b4ccjd"]
+[gd_scene load_steps=10 format=3 uid="uid://dpnq417b4ccjd"]
 
+[ext_resource type="Script" path="res://main.gd" id="1_6k526"]
 [ext_resource type="Material" uid="uid://dq5fh5mg3qvn7" path="res://art/ground_material.tres" id="1_cwgva"]
 [ext_resource type="PackedScene" uid="uid://c3b5b41lvlm64" path="res://flying_craft.tscn" id="2_36o8p"]
+[ext_resource type="PackedScene" uid="uid://crc364heytxob" path="res://obstacle.tscn" id="3_78fkf"]
+[ext_resource type="FontFile" uid="uid://cyvo0hxccqqr2" path="res://fonts/Montserrat-Medium.ttf" id="5_33ujt"]
+[ext_resource type="Script" path="res://RemainingLabel.gd" id="6_2ry32"]
 
 [sub_resource type="BoxShape3D" id="BoxShape3D_kf5ae"]
 size = Vector3(5000, 2, 5000)
@@ -9,10 +13,19 @@ size = Vector3(5000, 2, 5000)
 [sub_resource type="BoxMesh" id="BoxMesh_dkm8v"]
 size = Vector3(5000, 2, 5000)
 
-[node name="Main" type="Node"]
+[sub_resource type="Theme" id="Theme_ty5d7"]
+default_font = ExtResource("5_33ujt")
+default_font_size = 22
 
-[node name="Ground" type="StaticBody3D" parent="."]
+[node name="Main" type="Node" node_paths=PackedStringArray("PopupDialog")]
+script = ExtResource("1_6k526")
+PopupDialog = NodePath("UserInterface/PopupDialog")
+ObstacleTemplate = ExtResource("3_78fkf")
+
+[node name="Ground" type="StaticBody3D" parent="." groups=["ground"]]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -1, 0)
+collision_layer = 4
+collision_mask = 7
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
 shape = SubResource("BoxShape3D_kf5ae")
@@ -29,3 +42,27 @@ transform = Transform3D(1, 0, 0, 0, 0.819152, 0.573576, 0, -0.573576, 0.819152, 
 
 [node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 0.5, 0.866025, 0, -0.866025, 0.5, 0, 0, 0)
+
+[node name="UserInterface" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="RemainingLabel" type="Label" parent="UserInterface"]
+layout_mode = 0
+offset_left = 845.0
+offset_top = 21.0
+offset_right = 1107.0
+offset_bottom = 49.0
+theme = SubResource("Theme_ty5d7")
+text = "Obstacles Remaining: 0"
+script = ExtResource("6_2ry32")
+
+[node name="PopupDialog" type="AcceptDialog" parent="UserInterface"]
+initial_position = 2
+ok_button_text = "Restart"
+
+[connection signal="obstacles_changed" from="." to="UserInterface/RemainingLabel" method="_on_main_obstacles_changed"]
+[connection signal="crash" from="FlyingCraft" to="." method="_on_flying_craft_crash"]
+[connection signal="confirmed" from="UserInterface/PopupDialog" to="." method="_on_popup_dialog_confirmed"]

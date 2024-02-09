@@ -7,6 +7,7 @@
 size = Vector3(183.578, 97.1314, 313.688)
 
 [node name="FlyingCraft" type="CharacterBody3D"]
+collision_mask = 7
 script = ExtResource("1_eehbn")
 
 [node name="Pivot" type="Node3D" parent="."]

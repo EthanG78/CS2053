@@ -1,0 +1,72 @@
+[gd_scene load_steps=6 format=3 uid="uid://crc364heytxob"]
+
+[ext_resource type="Script" path="res://obstacle.gd" id="1_h41yc"]
+[ext_resource type="Material" uid="uid://b5ymnelg1y31e" path="res://art/obstacle_material.tres" id="1_s5ehr"]
+
+[sub_resource type="BoxMesh" id="BoxMesh_cji84"]
+size = Vector3(310, 30, 60)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_0vksa"]
+size = Vector3(310, 30, 60)
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_xa3wm"]
+size = Vector3(250, 220.353, 60)
+
+[node name="Obstacle" type="Node3D"]
+script = ExtResource("1_h41yc")
+
+[node name="Block1" type="StaticBody3D" parent="." groups=["obstacle"]]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Block1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, 0)
+material_override = ExtResource("1_s5ehr")
+mesh = SubResource("BoxMesh_cji84")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Block1"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, 0)
+shape = SubResource("BoxShape3D_0vksa")
+
+[node name="Block2" type="StaticBody3D" parent="." groups=["obstacle"]]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 155, 125, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Block2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, 0)
+material_override = ExtResource("1_s5ehr")
+mesh = SubResource("BoxMesh_cji84")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Block2"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, 0)
+shape = SubResource("BoxShape3D_0vksa")
+
+[node name="Block3" type="StaticBody3D" parent="." groups=["obstacle"]]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, -125, 125, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Block3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, 0)
+material_override = ExtResource("1_s5ehr")
+mesh = SubResource("BoxMesh_cji84")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Block3"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, 0)
+shape = SubResource("BoxShape3D_0vksa")
+
+[node name="Block4" type="StaticBody3D" parent="." groups=["obstacle"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 250, 0)
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Block4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, 0)
+material_override = ExtResource("1_s5ehr")
+mesh = SubResource("BoxMesh_cji84")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Block4"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 15, 0)
+shape = SubResource("BoxShape3D_0vksa")
+
+[node name="Trigger" type="Area3D" parent="." groups=["gap"]]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 125, 0)
+collision_layer = 2
+collision_mask = 7
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 14.6112, 0)
+shape = SubResource("BoxShape3D_xa3wm")

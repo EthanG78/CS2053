@@ -11,45 +11,53 @@ var motionDirectionXZ : int
 var motionSpeedY : float
 var motionDirectionY : int
 
+var gameOver : bool
+
+signal crash
+
 func _ready():
 	rotationAngleDegree = 0
 	rotationSpeedDegree = 2
 	rotationDirection = 0
 	
 	motionVelocity = Vector3.ZERO
-	motionSpeedXZ = 500
-	motionDirectionXZ = 0
+	motionSpeedXZ = 500.0
+	motionDirectionXZ = -1
 	
 	motionSpeedY = 100
 	motionDirectionY = 0
 	
 func _process(delta):
+	if gameOver:
+		return
+	
 	if Input.is_action_pressed("left_turn"):
 		# Turn the flying craft counter-clockwise
-		rotationDirection = 1.0
+		rotationDirection = 1
 		
 	if Input.is_action_pressed("right_turn"):
 		# Turn the flying craft clockwise
-		rotationDirection = -1.0
-		
-	if Input.is_action_pressed("forward"):
-		# Move forward
-		motionDirectionXZ = -1.0
-		
-	if Input.is_action_pressed("backwards"):
-		# Move backwards
-		motionDirectionXZ = 1.0
+		rotationDirection = -1
 		
 	if Input.is_action_pressed("up"):
 		# Move up
-		motionDirectionY = 1.0
+		motionDirectionY = 1
 		
 	if Input.is_action_pressed("down"):
 		# Move down
-		motionDirectionY = -1.0
+		motionDirectionY = -1
 		
 	Rotate(delta)
 	Move(delta)
+	
+func _physics_process(delta):
+	if gameOver:
+		return
+	# If I want to handle collisions using 
+	# get_slide_collision_count(), I need 
+	# to move_and_slide()
+	Handle_Collisions()
+	move_and_slide()
 
 func Rotate(delta):
 	var rotationVelocityDegree = rotationSpeedDegree * rotationDirection
@@ -79,5 +87,23 @@ func Move(delta):
 	transform = transform.translated_local(motionVelocity * delta)
 	
 	rotationDirection = 0
-	motionDirectionXZ = 0
+	motionDirectionXZ = -1
 	motionDirectionY = 0
+	
+func Handle_Collisions():
+	# Iterate through all collisions that occured this frame
+	for index in range(get_slide_collision_count()):
+		# Get one of the collisions with the ship
+		var collision = get_slide_collision(index)
+		
+		# Collisions can be null?
+		if collision.get_collider() == null:
+			continue
+			
+		# Collision with ground or obtacle
+		if collision.get_collider().is_in_group("ground") or collision.get_collider().is_in_group("obstacle"):
+			# Results in Game Over
+			crash.emit()
+			gameOver = true
+			break;
+			
