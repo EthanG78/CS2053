@@ -5,7 +5,8 @@ extends Node
 
 var NObstacles : int
 
-signal obstacles_changed
+signal obstacles_changed(n_obstacles)
+signal game_won
 
 func _ready():
 	var groundSize = $Ground/MeshInstance3D.mesh.size
@@ -24,8 +25,8 @@ func _ready():
 		obstacle.Initialize(obstaclePos)
 		
 		# Connect to the signals emitted from trigger in obstacles
-		obstacle.get_node("Trigger").area_exited.connect(_on_obstacle_cleared)
-		obstacle.get_node("Trigger").area_entered.connect(_on_obstacle_cleared)
+		obstacle.get_node("Trigger").body_exited.connect(_on_obstacle_cleared)
+
 		
 		# Add the obstacle to the scene
 		add_child(obstacle)
@@ -39,12 +40,18 @@ func _process(delta):
 
 func _on_flying_craft_crash():
 	PopupDialog.set_title("Game Over")
-	PopupDialog.set_text("Restart Game?")
+	PopupDialog.set_text("You Lose!")
 	PopupDialog.set_visible(true)
 	
-func _on_obstacle_cleared(area):
-	print(area)
-	obstacles_changed.emit(--NObstacles)
+func _on_obstacle_cleared(body):
+	if body.name == "FlyingCraft":
+		NObstacles = NObstacles - 1
+		obstacles_changed.emit(NObstacles)
+		if NObstacles == 0:
+			game_won.emit()
+			PopupDialog.set_title("Game Over")
+			PopupDialog.set_text("You Win!")
+			PopupDialog.set_visible(true)
 
 func _on_popup_dialog_confirmed():
 	get_tree().reload_current_scene()

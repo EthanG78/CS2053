@@ -106,4 +106,6 @@ func Handle_Collisions():
 			crash.emit()
 			gameOver = true
 			break;
-			
+
+func _on_main_game_won():
+	gameOver = true

@@ -61,10 +61,8 @@ script = ExtResource("6_2ry32")
 
 [node name="PopupDialog" type="AcceptDialog" parent="UserInterface"]
 initial_position = 2
-size = Vector2i(125, 100)
 ok_button_text = "Restart"
 
-[connection signal="game_won" from="." to="FlyingCraft" method="_on_main_game_won"]
 [connection signal="obstacles_changed" from="." to="UserInterface/RemainingLabel" method="_on_main_obstacles_changed"]
 [connection signal="crash" from="FlyingCraft" to="." method="_on_flying_craft_crash"]
 [connection signal="confirmed" from="UserInterface/PopupDialog" to="." method="_on_popup_dialog_confirmed"]
