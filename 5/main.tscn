@@ -1,0 +1,46 @@
+[gd_scene load_steps=11 format=3 uid="uid://cuu6do1i2lpju"]
+
+[ext_resource type="PackedScene" uid="uid://dwsn6y7t3gwrj" path="res://jet.tscn" id="1_ww3ok"]
+[ext_resource type="Texture2D" uid="uid://dvgyor1ykhuyq" path="res://assets/skybox.png" id="2_8l7ic"]
+[ext_resource type="Texture2D" uid="uid://bfvjk2ighjosm" path="res://art/ground_texture.tres" id="3_g6240"]
+
+[sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_ger1u"]
+panorama = ExtResource("2_8l7ic")
+
+[sub_resource type="Sky" id="Sky_6tcha"]
+sky_material = SubResource("PanoramaSkyMaterial_ger1u")
+
+[sub_resource type="Environment" id="Environment_83j64"]
+background_mode = 2
+sky = SubResource("Sky_6tcha")
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_etkw1"]
+albedo_texture = ExtResource("3_g6240")
+
+[sub_resource type="BoxMesh" id="BoxMesh_ohvbt"]
+size = Vector3(100, 2, 100)
+
+[sub_resource type="StandardMaterial3D" id="StandardMaterial3D_lqpg1"]
+albedo_texture = ExtResource("3_g6240")
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_qnrb7"]
+size = Vector3(100, 2, 100)
+
+[node name="Main" type="Node"]
+
+[node name="Jet" parent="." instance=ExtResource("1_ww3ok")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 11.5356, 0)
+
+[node name="Camera3D" type="Camera3D" parent="Jet"]
+transform = Transform3D(-4.37114e-08, 0.34202, -0.939693, 0, 0.939693, 0.34202, 1, 1.49502e-08, -4.10753e-08, -5.70586, 2.73851, 0)
+environment = SubResource("Environment_83j64")
+
+[node name="Ground" type="StaticBody3D" parent="." groups=["Ground"]]
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="Ground"]
+material_override = SubResource("StandardMaterial3D_etkw1")
+mesh = SubResource("BoxMesh_ohvbt")
+surface_material_override/0 = SubResource("StandardMaterial3D_lqpg1")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
+shape = SubResource("BoxShape3D_qnrb7")
