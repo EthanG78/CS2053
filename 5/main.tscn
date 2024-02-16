@@ -1,4 +1,4 @@
-[gd_scene load_steps=18 format=3 uid="uid://cuu6do1i2lpju"]
+[gd_scene load_steps=19 format=3 uid="uid://cuu6do1i2lpju"]
 
 [ext_resource type="Script" path="res://main.gd" id="1_j12yn"]
 [ext_resource type="PackedScene" uid="uid://dwsn6y7t3gwrj" path="res://jet.tscn" id="1_ww3ok"]
@@ -8,6 +8,7 @@
 [ext_resource type="FontFile" uid="uid://cyvo0hxccqqr2" path="res://fonts/Montserrat-Medium.ttf" id="5_1flf0"]
 [ext_resource type="Script" path="res://TimerLabel.gd" id="5_6vkx3"]
 [ext_resource type="Script" path="res://ScoreLabel.gd" id="7_uo6ls"]
+[ext_resource type="Script" path="res://SpotLight.gd" id="9_8w5t7"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_ger1u"]
 panorama = ExtResource("2_8l7ic")
@@ -18,6 +19,8 @@ sky_material = SubResource("PanoramaSkyMaterial_ger1u")
 [sub_resource type="Environment" id="Environment_83j64"]
 background_mode = 2
 sky = SubResource("Sky_6tcha")
+ambient_light_source = 2
+ambient_light_energy = 16.0
 
 [sub_resource type="StandardMaterial3D" id="StandardMaterial3D_etkw1"]
 albedo_texture = ExtResource("3_g6240")
@@ -110,6 +113,23 @@ ok_button_text = "Restart"
 [node name="GameTimer" type="Timer" parent="."]
 one_shot = true
 
+[node name="DirectionalLight" type="DirectionalLight3D" parent="."]
+light_energy = 16.0
+shadow_enabled = true
+
+[node name="OmniLight" type="OmniLight3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.0758301, 6.12511, 9.74745)
+light_color = Color(0, 0.760784, 0.301961, 1)
+light_energy = 16.0
+
+[node name="SpotLight" type="SpotLight3D" parent="." node_paths=PackedStringArray("Target")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 3.11647, 0)
+light_color = Color(0.364706, 0.568627, 1, 1)
+light_energy = 16.0
+spot_range = 18.118
+script = ExtResource("9_8w5t7")
+Target = NodePath("../Jet")
+
 [connection signal="s_game_over" from="." to="Jet" method="_on_game_over"]
 [connection signal="s_game_over" from="." to="Jet" method="_on_main_s_game_over"]
 [connection signal="s_collision" from="Obstacle1" to="Jet" method="_on_obstacle_collision"]
@@ -131,6 +151,6 @@ one_shot = true
 [connection signal="s_passed" from="Obstacle4" to="UserInterface/ScoreLabel" method="_obstacle_passed"]
 [connection signal="s_game_over" from="UserInterface/TimerLabel" to="." method="_on_timer_label_s_game_over"]
 [connection signal="confirmed" from="UserInterface/PopupDialog" to="." method="_on_popup_dialog_confirmed"]
-[connection signal="timeout" from="GameTimer" to="Jet" method="_on_game_timer_timeout"]
 [connection signal="timeout" from="GameTimer" to="Jet" method="_on_game_over"]
+[connection signal="timeout" from="GameTimer" to="Jet" method="_on_game_timer_timeout"]
 [connection signal="timeout" from="GameTimer" to="UserInterface/TimerLabel" method="_on_game_timer_timeout"]

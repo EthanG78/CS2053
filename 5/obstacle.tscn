@@ -67,8 +67,8 @@ transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5, 0)
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Trigger"]
 shape = SubResource("BoxShape3D_6mv35")
 
-[connection signal="body_entered" from="Pillar1" to="." method="_on_pillar_1_body_entered"]
 [connection signal="body_entered" from="Pillar1" to="." method="_on_pillar_body_entered"]
+[connection signal="body_entered" from="Pillar1" to="." method="_on_pillar_1_body_entered"]
 [connection signal="body_exited" from="Pillar1" to="." method="_on_pillar_body_exited"]
 [connection signal="body_entered" from="Pillar2" to="." method="_on_pillar_body_entered"]
 [connection signal="body_exited" from="Pillar2" to="." method="_on_pillar_body_exited"]
