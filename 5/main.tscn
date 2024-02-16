@@ -1,8 +1,13 @@
-[gd_scene load_steps=11 format=3 uid="uid://cuu6do1i2lpju"]
+[gd_scene load_steps=18 format=3 uid="uid://cuu6do1i2lpju"]
 
+[ext_resource type="Script" path="res://main.gd" id="1_j12yn"]
 [ext_resource type="PackedScene" uid="uid://dwsn6y7t3gwrj" path="res://jet.tscn" id="1_ww3ok"]
 [ext_resource type="Texture2D" uid="uid://dvgyor1ykhuyq" path="res://assets/skybox.png" id="2_8l7ic"]
 [ext_resource type="Texture2D" uid="uid://bfvjk2ighjosm" path="res://art/ground_texture.tres" id="3_g6240"]
+[ext_resource type="PackedScene" uid="uid://cebxidrtrrui5" path="res://obstacle.tscn" id="4_5j8mh"]
+[ext_resource type="FontFile" uid="uid://cyvo0hxccqqr2" path="res://fonts/Montserrat-Medium.ttf" id="5_1flf0"]
+[ext_resource type="Script" path="res://TimerLabel.gd" id="5_6vkx3"]
+[ext_resource type="Script" path="res://ScoreLabel.gd" id="7_uo6ls"]
 
 [sub_resource type="PanoramaSkyMaterial" id="PanoramaSkyMaterial_ger1u"]
 panorama = ExtResource("2_8l7ic")
@@ -26,10 +31,21 @@ albedo_texture = ExtResource("3_g6240")
 [sub_resource type="BoxShape3D" id="BoxShape3D_qnrb7"]
 size = Vector3(100, 2, 100)
 
-[node name="Main" type="Node"]
+[sub_resource type="Theme" id="Theme_jqe5c"]
+default_font = ExtResource("5_1flf0")
+default_font_size = 22
+
+[sub_resource type="Theme" id="Theme_yciyl"]
+default_font = ExtResource("5_1flf0")
+default_font_size = 22
+
+[node name="Main" type="Node" node_paths=PackedStringArray("GameTimer", "Dialog")]
+script = ExtResource("1_j12yn")
+GameTimer = NodePath("GameTimer")
+Dialog = NodePath("UserInterface/PopupDialog")
 
 [node name="Jet" parent="." instance=ExtResource("1_ww3ok")]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 11.5356, 0)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 5.73429, 0)
 
 [node name="Camera3D" type="Camera3D" parent="Jet"]
 transform = Transform3D(-1, -2.99004e-08, 8.21505e-08, 0, 0.939693, 0.34202, -8.74228e-08, 0.34202, -0.939693, 0, 2.04208, -5.2104)
@@ -44,3 +60,77 @@ surface_material_override/0 = SubResource("StandardMaterial3D_lqpg1")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="Ground"]
 shape = SubResource("BoxShape3D_qnrb7")
+
+[node name="Obstacle1" parent="." instance=ExtResource("4_5j8mh")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 0, 1, 10)
+
+[node name="Obstacle2" parent="." instance=ExtResource("4_5j8mh")]
+transform = Transform3D(-3.09086e-08, -0.707107, 0.707107, 1, -4.37114e-08, 0, 3.09086e-08, 0.707107, 0.707107, -5.3781, 6.06953, 0.651975)
+
+[node name="Obstacle3" parent="." instance=ExtResource("4_5j8mh")]
+transform = Transform3D(0.365075, -0.365075, -0.856412, 0.707107, 0.707107, 0, 0.605574, -0.605574, 0.516294, -2.7599, 3.21733, -7.08582)
+
+[node name="Obstacle4" parent="." instance=ExtResource("4_5j8mh")]
+transform = Transform3D(0.640856, -0.640856, 0.422618, 0.707107, 0.707107, 0, -0.298836, 0.298836, 0.906308, 11.1038, 2.96823, -6.12456)
+
+[node name="UserInterface" type="Control" parent="."]
+layout_mode = 3
+anchors_preset = 0
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="TimerLabel" type="Label" parent="UserInterface" node_paths=PackedStringArray("GameTimer", "Dialog")]
+layout_mode = 0
+offset_left = 846.0
+offset_top = 48.0
+offset_right = 1072.0
+offset_bottom = 76.0
+theme = SubResource("Theme_jqe5c")
+text = "Time Remaining: 0 s"
+script = ExtResource("5_6vkx3")
+GameTimer = NodePath("../../GameTimer")
+Dialog = NodePath("../PopupDialog")
+
+[node name="ScoreLabel" type="Label" parent="UserInterface"]
+layout_mode = 0
+offset_left = 846.0
+offset_top = 21.0
+offset_right = 1050.0
+offset_bottom = 49.0
+theme = SubResource("Theme_yciyl")
+text = "Obstacles Passed: 0"
+script = ExtResource("7_uo6ls")
+
+[node name="PopupDialog" type="AcceptDialog" parent="UserInterface"]
+title = "Game Over"
+initial_position = 2
+size = Vector2i(125, 100)
+ok_button_text = "Restart"
+
+[node name="GameTimer" type="Timer" parent="."]
+one_shot = true
+
+[connection signal="s_game_over" from="." to="Jet" method="_on_game_over"]
+[connection signal="s_game_over" from="." to="Jet" method="_on_main_s_game_over"]
+[connection signal="s_collision" from="Obstacle1" to="Jet" method="_on_obstacle_collision"]
+[connection signal="s_end_collision" from="Obstacle1" to="Jet" method="_on_obstacle_collision_end"]
+[connection signal="s_passed" from="Obstacle1" to="Jet" method="_on_obstacle_passed"]
+[connection signal="s_passed" from="Obstacle1" to="UserInterface/ScoreLabel" method="_obstacle_passed"]
+[connection signal="s_collision" from="Obstacle2" to="Jet" method="_on_obstacle_collision"]
+[connection signal="s_end_collision" from="Obstacle2" to="Jet" method="_on_obstacle_collision_end"]
+[connection signal="s_passed" from="Obstacle2" to="Jet" method="_on_obstacle_passed"]
+[connection signal="s_passed" from="Obstacle2" to="UserInterface/ScoreLabel" method="_obstacle_passed"]
+[connection signal="s_collision" from="Obstacle3" to="Jet" method="_on_obstacle_collision"]
+[connection signal="s_end_collision" from="Obstacle3" to="Jet" method="_on_obstacle_collision_end"]
+[connection signal="s_passed" from="Obstacle3" to="Jet" method="_on_obstacle_passed"]
+[connection signal="s_passed" from="Obstacle3" to="UserInterface/ScoreLabel" method="_obstacle_passed"]
+[connection signal="s_collision" from="Obstacle4" to="Jet" method="_on_obstacle_collision"]
+[connection signal="s_end_collision" from="Obstacle4" to="Jet" method="_on_obstacle_collision_end"]
+[connection signal="s_passed" from="Obstacle4" to="." method="_on_obstacle_4_s_passed"]
+[connection signal="s_passed" from="Obstacle4" to="Jet" method="_on_obstacle_passed"]
+[connection signal="s_passed" from="Obstacle4" to="UserInterface/ScoreLabel" method="_obstacle_passed"]
+[connection signal="s_game_over" from="UserInterface/TimerLabel" to="." method="_on_timer_label_s_game_over"]
+[connection signal="confirmed" from="UserInterface/PopupDialog" to="." method="_on_popup_dialog_confirmed"]
+[connection signal="timeout" from="GameTimer" to="Jet" method="_on_game_timer_timeout"]
+[connection signal="timeout" from="GameTimer" to="Jet" method="_on_game_over"]
+[connection signal="timeout" from="GameTimer" to="UserInterface/TimerLabel" method="_on_game_timer_timeout"]
